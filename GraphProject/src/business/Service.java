@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Service {
     public static void main(String[] args) {
-        String text = "Gallery unveils interactive tree A Christmas tree that can receive text messages has been unveiled at London's Tate Britain art gallery. "
+        String text = "Gallery unveils interactive tree, A Christmas tree that can receive text messages has been unveiled at London's Tate Britain art gallery. "
                 + "The spruce has an antenna which can receive Bluetooth texts sent by visitors to the Tate. "
                 + "The messages will be \"unwrapped\" by sculptor Richard Wentworth, who is responsible for decorating the tree with broken plates and light bulbs. "
                 + "It is the 17th year that the gallery has invited an artist to dress their Christmas tree. Artists who have decorated the Tate tree in previous years include Tracey "
@@ -15,8 +15,17 @@ public class Service {
         
         ArrayList<String> texts = ayristir(text); 
         
+        NodeManager nodeManager = new NodeManager();
         
-        for(String str : texts){
+        String metin1 = "ali the eve, in  gel sonra  gir.";
+        
+        String metin = nodeManager.Punctuation(metin1);
+        ArrayList<String> wordsArray = nodeManager.Tokenization(metin);
+        ArrayList<String> words = nodeManager.StopWord(wordsArray);
+        System.out.println(metin);
+        
+        
+        for(String str : words){
             System.out.println(str);
         }
         
