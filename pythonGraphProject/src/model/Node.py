@@ -1,3 +1,4 @@
+'''
 class Node:
     text = ""
     textPoint = 0.0        #double
@@ -7,3 +8,4 @@ class Node:
 
     def __int__(self, textNo):
         self.textNo = textNo
+'''
