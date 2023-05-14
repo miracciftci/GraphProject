@@ -44,4 +44,5 @@ text = "Gallery 16 unveils London interactive Jack tree A Christmas tree that ca
 cumleler = nltk.sent_tokenize(text)  # metni cumlelere ayirma
 
 taggent_sent = pos_tag(Tokennize(text))
+print(taggent_sent)
 
