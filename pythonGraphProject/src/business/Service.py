@@ -1,48 +1,114 @@
 import string
 import nltk
+from nltk import pos_tag, PorterStemmer
 from nltk import pos_tag, word_tokenize
-from nltk.probability import FreqDist
 from nltk.corpus import stopwords
+from nltk.probability import FreqDist
 
-def Tokennize(text):   #Tokenization: metnin küçük parçalara ayrılmasıdır.
-    words = nltk.word_tokenize(text)
-    return words
+class Service:
+    def Stemming(self,text):  #Stemming: kelimelerin kökünü bulma
+        ps = PorterStemmer()
+        words = nltk.word_tokenize(text)
+        resposText = ""
+        for w in words:
+            resposText += f"{ps.stem(w)} "
 
-def Punctuation(text): #Punctuation: Cümledeki noktalama işaretlerinin kaldırılmasıdır.
-    clearText = text.translate(str.maketrans('', '', string.punctuation))
-    return text
+        return resposText.strip()
 
-def Ayristir(text):    #Metni cumlelere ayirma
-    texts = nltk.sent_tokenize(text)
-    return texts
+    def stopWords(self,text):    #StopWords: stopWords kelimelerin temizlenmesi
+        stopWords = set(stopwords.words('english'))
+        words = nltk.word_tokenize(text.lower())
+        wordsFiltered = ""
+        for w in words:
+            if w not in stopWords:
+                wordsFiltered += f"{w} "
 
-def cumledeNumaricVeriSayisi(text):
-    words = nltk.word_tokenize(text)
-    taggent_sent = pos_tag(words)
-    total = 0
+        return wordsFiltered.strip()
 
-    for i in taggent_sent:
-        if (i[1] == 'CD'):
-            total+=1
-    return total
+    def Tokennize(self, text):   #Tokenization: metnin küçük parçalara ayrılmasıdır.
+        words = nltk.word_tokenize(text)
+        return words
 
-def cumledeOzelIsimSayisi(text):
-    words = nltk.word_tokenize(text)
-    taggent_sent = pos_tag(words)
-    total = 0
+    def Punctuation(self, text): #Punctuation: Cümledeki noktalama işaretlerinin kaldırılmasıdır.
+        clearText = text.translate(str.maketrans('', '', string.punctuation))
+        return clearText
 
-    for i in taggent_sent:
-        if (i[1] == 'NNP'):
-            total += 1
-    return total
+    def Ayristir(self, text):    #Metni cumlelere ayirma
+        texts = nltk.sent_tokenize(text)
+        return texts
 
+    def cumledeNumaricVeriSayisi(self, text):
+        words = nltk.word_tokenize(text)
+        taggent_sent = pos_tag(words)
+        total = 0
+        for i in taggent_sent:
+            if (i[1] == 'CD'):
+                total+=1
+        return total
 
+    def cumledeOzelIsimSayisi(self, text):
+        words = nltk.word_tokenize(text)
+        taggent_sent = pos_tag(words)
+        total = 0
 
+        for i in taggent_sent:
+            if (i[1] == 'NNP'):
+                total += 1
+        return total
 
-text = "Gallery 16 unveils London interactive Jack tree A Christmas tree that can receive text messages has been unveiled at London's Tate Britain art gallery.The spruce has an antenna which can receive Bluetooth texts sent by visitors to the Tate. The messages will be \"unwrapped\" by sculptor Richard Wentworth, who is responsible for decorating the tree with broken plates and light bulbs. It is the 17th year that the gallery has invited an artist to dress their Christmas tree. Artists who have decorated the Tate tree in previous years include Tracey Emin in 2002. The plain green Norway spruce is displayed in the gallery's foyer. Its light bulb adornments are dimmed, ordinary domestic ones joined together with string. The plates decorating the branches will be auctioned off for the children's charity ArtWorks. Wentworth worked as an assistant to sculptor Henry Moore in the late 1960s. His reputation as a sculptor grew in the 1980s, while he has been one of the most influential teachers during the last two decades. Wentworth is also known for his photography of mundane, everyday subjects such as a cigarette packet jammed under the wonky leg of a table."
+    def temaKelimeler(self, text):
+        service = Service()
+        text = service.Punctuation(text)
+        text = service.stopWords(text)
+        words = service.Tokennize(text)
 
-cumleler = nltk.sent_tokenize(text)  # metni cumlelere ayirma
+        num = len(words) / 10
+        fd = nltk.FreqDist(words)
+        words = fd.most_common(int(num))
+        array = []
+        for i in words:
+            array.append(i[0])
 
-taggent_sent = pos_tag(Tokennize(text))
-print(taggent_sent)
+        return array
+
+    def cumledeTemaKelimeOrani(self,text,node):
+        total = 0
+        service = Service()
+        cumle = service.Punctuation(node.text)
+        cumle = service.stopWords(cumle)
+        words = service.Tokennize(cumle)
+        temaText = service.temaKelimeler(text)
+
+        for i in words:
+            for tema in temaText:
+                if(i==tema):
+                    total+=1
+
+        result = total / len(words)
+        return result
+
+    #?
+    def thresholduGecen(self, threshold,nodes):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
+        total = 0
+        for node in nodes:
+            if threshold < node.anlamBenzerligi:
+                total += 1
+        return threshold
+
+    def cumleSkoruHesaplama(self,node,text):
+        service = Service()
+        point = 0.0
+        total = len(service.Tokennize(node.text))
+
+        point += service.cumledeNumaricVeriSayisi(node.text) / total  #p1
+        point += service.cumledeOzelIsimSayisi(node.text) / total    #p2
+        # ön işlemler
+        metin = service.Punctuation(node.text)
+        metin = service.stopWords(metin)
+        metin = service.Stemming(metin)
+        point += node.tresholduGecenBaglantiSayisi / (len(node.texts) - 1)  # p4
+        point += service.cumledeTemaKelimeOrani(text,node)  #p5
+
+        return point
+
 
