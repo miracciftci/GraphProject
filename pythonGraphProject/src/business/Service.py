@@ -5,6 +5,9 @@ from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 
+from src.model.Node import Node
+
+
 class Service:
     def Stemming(self,text):  #Stemming: kelimelerin kökünü bulma
         ps = PorterStemmer()
@@ -87,15 +90,38 @@ class Service:
         result = total / len(words)
         return result
 
-    #?
-    def thresholduGecen(self, threshold,nodes):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
+    def cumleBenzerligiHesaplama(self, node1,node2):  #kosinus benzerliği
+        point = 0.0
+        service = Service()
+        text1 = service.Punctuation(node1.text.lower())
+        text2 = service.Punctuation(node2.text.lower())
+        totalText = service.Tokennize(text1)
+        array = totalText
+
+        for str in service.Tokennize(text2):
+            count = 0
+            for wordsText1 in array:
+                if(wordsText1 == str):
+                    count = 1
+                    break
+            if(count == 0):
+                totalText.append(str)
+
+        dot1 = []
+        dot2 = []
+
+        for str in totalText:
+
+        return point
+
+    def cumleBenzerligiThresholdunuGecen(self, threshold,nodes):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
         total = 0
         for node in nodes:
             if threshold < node.anlamBenzerligi:
                 total += 1
         return threshold
 
-    def cumleSkoruHesaplama(self,node,text):
+    def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi):
         service = Service()
         point = 0.0
         total = len(service.Tokennize(node.text))
@@ -106,9 +132,10 @@ class Service:
         metin = service.Punctuation(node.text)
         metin = service.stopWords(metin)
         metin = service.Stemming(metin)
-        point += node.tresholduGecenBaglantiSayisi / (len(node.texts) - 1)  # p4
+        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node.nodes) / (len(node.nodes) - 1)  # p3
+        # p4
         point += service.cumledeTemaKelimeOrani(text,node)  #p5
 
-        return point
+        return round(point,2)
 
 
