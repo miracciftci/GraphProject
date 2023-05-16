@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets , QtCore , QtGui 
 from PyQt5.QtWidgets import QInputDialog , QLineEdit , QFileDialog,QApplication , QWidget 
 from PyQt5.QtGui import QIcon
+import igraph
+
 
 
 class Ui_Form(object):
@@ -41,11 +43,12 @@ class Ui_Form(object):
         
     def open_dialog_box(self):
         filename = QFileDialog.getOpenFileName()
-        path = filename[0]
-        print(path)
+        filepath = filename[0]
+        print(filepath)
 
-        with open(path, "r") as f:
-            print(f.readline)
+        with open(filepath, "r") as file:
+            sentences = file.read().split(sep=".")
+            print(sentences[0])
 
 
 if __name__ == "__main__":
