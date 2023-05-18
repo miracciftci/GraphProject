@@ -1,3 +1,4 @@
+import math
 import string
 import nltk
 from nltk import pos_tag, PorterStemmer
@@ -91,16 +92,16 @@ class Service:
         return result
 
     def cumleBenzerligiHesaplama(self, node1,node2):  #kosinus benzerliği
-        point = 0.0
         service = Service()
         text1 = service.Punctuation(node1.text.lower())
         text2 = service.Punctuation(node2.text.lower())
+        words1 = service.Tokennize(text1)
+        words2 = service.Tokennize(text2)
         totalText = service.Tokennize(text1)
-        array = totalText
 
-        for str in service.Tokennize(text2):
+        for str in words2:
             count = 0
-            for wordsText1 in array:
+            for wordsText1 in words1:
                 if(wordsText1 == str):
                     count = 1
                     break
@@ -111,17 +112,56 @@ class Service:
         dot2 = []
 
         for str in totalText:
+            count = 0
+            for w1 in words1:
+                if(w1 == str):
+                    count = 1
+                    break
+            dot1.append(count)
+            count = 0
+            for w2 in words2:
+                if (w2 == str):
+                    count = 1
+                    break
+            dot2.append(count)
 
+        up = 0.0
+        d1 = 0.0
+        d2 = 0.0
+        for i in range(len(dot1)):
+            up += dot1[i]*dot2[i]
+            d1 += dot1[i]
+            d2 += dot2[i]
+
+        down = abs(math.sqrt(d2))*abs(math.sqrt(d1))
+        point = up/down
+
+        return round(point,3)
+
+    def cumleBenzerligiThresholdunuGecen(self, threshold,node):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
+        total = 0
+        for i in range(len(node.nodeBenzerlikleri)):
+            if threshold < node.nodeBenzerlikleri[i]:
+                total += 1
+        return total
+
+    def basliktakiKelimelerinOrani(self, node, BaslikCumlesi):    # p4
+        service = Service()
+        textBaslik = service.Punctuation(BaslikCumlesi.lower())
+        baslikWords = service.Tokennize(textBaslik)
+        text = service.Punctuation(node.text.lower())
+        textWords = service.Tokennize(text)
+
+        count = 0
+        for str in baslikWords:
+            for word in textWords:
+                if(word == str):
+                    count += 1
+
+        point = count / len(textWords)
         return point
 
-    def cumleBenzerligiThresholdunuGecen(self, threshold,nodes):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
-        total = 0
-        for node in nodes:
-            if threshold < node.anlamBenzerligi:
-                total += 1
-        return threshold
-
-    def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi):
+    def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi,baslikText):
         service = Service()
         point = 0.0
         total = len(service.Tokennize(node.text))
@@ -132,8 +172,8 @@ class Service:
         metin = service.Punctuation(node.text)
         metin = service.stopWords(metin)
         metin = service.Stemming(metin)
-        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node.nodes) / (len(node.nodes) - 1)  # p3
-        # p4
+        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node) / (len(node.nodeBenzerlikleri) - 1)  # p3
+        point += service.basliktakiKelimelerinOrani(node,baslikText) #p4
         point += service.cumledeTemaKelimeOrani(text,node)  #p5
 
         return round(point,2)
