@@ -5,6 +5,7 @@ from nltk import pos_tag, PorterStemmer
 from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
+from rouge import Rouge
 
 from src.model.Node import Node
 
@@ -37,9 +38,21 @@ class Service:
         clearText = text.translate(str.maketrans('', '', string.punctuation))
         return clearText
 
-    def Ayristir(self, text):    #Metni cumlelere ayirma
-        texts = nltk.sent_tokenize(text)
-        return texts
+    def Ayristir(self, text):  #Metni cumlelere ayirma
+        str = ""
+        array = []
+
+        for i in text:
+            if(i == "." or i == "!" or i== "?" or i== ":" or i== ";"):
+                str += i
+                array.append(str.strip())
+                str = ""
+                continue
+
+            str += i
+
+        return array
+
 
     def cumledeNumaricVeriSayisi(self, text):
         words = nltk.word_tokenize(text)
@@ -161,19 +174,42 @@ class Service:
         point = count / len(textWords)
         return point
 
+    def textOzetleme(self, nodes):
+        text = ""
+        array = []
+
+        for node in nodes:
+            array.append(node.textPoint)
+
+        array.sort(reverse=True)
+        for i in range(int(len(array)/2)):
+            for node in nodes:
+                if(node.textPoint == array[i]):
+                    text += f"{node.text} "
+
+        return text.strip()
+
+    def textOzetlemeROUGEskoru(self,textOzet,textGercekOzet):    # ROUGE
+        rouge = Rouge()
+        total = 0
+        result = rouge.get_scores(textOzet,textGercekOzet,True)
+        array = result['rouge-1']
+
+        for str in array:
+            total += array[str]
+        score = total/3
+
+        return round(score,7)
+
     def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi,baslikText):
         service = Service()
         point = 0.0
         total = len(service.Tokennize(node.text))
 
         point += service.cumledeNumaricVeriSayisi(node.text) / total  #p1
-        point += service.cumledeOzelIsimSayisi(node.text) / total    #p2
-        # ön işlemler
-        metin = service.Punctuation(node.text)
-        metin = service.stopWords(metin)
-        metin = service.Stemming(metin)
+        point += service.cumledeOzelIsimSayisi(node.text) / total    #p3
         point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node) / (len(node.nodeBenzerlikleri) - 1)  # p3
-        point += service.basliktakiKelimelerinOrani(node,baslikText) #p4
+        point += service.basliktakiKelimelerinOrani(node,baslikText)   #p4
         point += service.cumledeTemaKelimeOrani(text,node)  #p5
 
         return round(point,2)
