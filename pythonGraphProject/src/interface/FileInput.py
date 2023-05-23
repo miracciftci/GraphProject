@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets , QtCore , QtGui 
 from PyQt5.QtWidgets import QInputDialog , QLineEdit , QFileDialog,QApplication , QWidget 
 from PyQt5.QtGui import QIcon
-import igraph
+
 
 
 
@@ -12,19 +12,19 @@ class Ui_Form(object):
         self.Buttonpush = QtWidgets.QPushButton(Form)
         self.Buttonpush.setGeometry(QtCore.QRect(85, 134, 111, 34))
         self.Buttonpush.setStyleSheet("background-color:blue;\n"
-                                      "color: white;\n"
-                                      "border-style: outset;\n"
-                                      "border-width:4px;\n"
-                                      "border-radius:12px;\n"
-                                      "border-color:blue;\n"
                                       "font:bold 15px;\n"
                                       "padding :7px;\n"
                                       "min-width:12px;\n"
+                                      "color: white;\n"
+                                      "border-radius:12px;\n"
+                                      "border-color:blue;\n"                                    
+                                      "border-style: outset;\n"
+                                      "border-width:2px;\n"
+                                      
                                       "\n"
                                       "\n"
                                       "")
         self.Buttonpush.setObjectName("Buttonpush")
-
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
