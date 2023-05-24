@@ -2,7 +2,10 @@ from PyQt5 import QtWidgets , QtCore , QtGui
 from PyQt5.QtWidgets import QInputDialog , QLineEdit , QFileDialog,QApplication , QWidget 
 from PyQt5.QtGui import QIcon
 
-
+class Input:
+    text = ""
+    textBaslik = ""
+    textOzet = ""
 
 
 class Ui_Form(object):
@@ -44,11 +47,11 @@ class Ui_Form(object):
     def open_dialog_box(self):
         filename = QFileDialog.getOpenFileName()
         filepath = filename[0]
-        print(filepath)
 
         with open(filepath, "r") as file:
-            sentences = file.read().split(sep=".")
-            print(sentences[0])
+            Input.textBaslik = file.readline().strip()
+            Input.text = file.read().strip()
+
 
 
 if __name__ == "__main__":
