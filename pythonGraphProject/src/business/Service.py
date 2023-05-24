@@ -7,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 from rouge import Rouge
 
+from src.interface.FileInput import Input
 from src.model.Node import Node
 
 
