@@ -5,4 +5,10 @@ class Node:
     nodeBenzerlikleri = []
 
 
+    def __init__(self,textNo,text,textPoint,NodeBenzerlikleri):
+        self.textNo = textNo
+        self.text = text 
+        self.textPoint = textPoint
+        self.nodeBenzerlikleri = NodeBenzerlikleri
+
         
