@@ -4,7 +4,6 @@ import nltk
 from nltk import pos_tag, PorterStemmer
 from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords
-from nltk.probability import FreqDist
 from rouge import Rouge
 
 from src.interface.FileInput import Input
@@ -12,6 +11,8 @@ from src.model.Node import Node
 
 
 class Service:
+    def __init__(self):
+        self.number = 1
     def Stemming(self,text):  #Stemming: kelimelerin kökünü bulma
         ps = PorterStemmer()
         words = nltk.word_tokenize(text)

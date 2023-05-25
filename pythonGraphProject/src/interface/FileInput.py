@@ -4,9 +4,10 @@ from PyQt5.QtGui import QIcon
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from Node import Node
 
-     
+import Service as sc
+from src.model.Node import Node
+
 
 class Input:
     text = ""
@@ -14,6 +15,7 @@ class Input:
     textOzet = ""
     cumleBenzerlikTreshold = 0
     cumleSkorTreshold = 0
+    nodes = []
 
 
 class Ui_Form(QMainWindow):
@@ -102,7 +104,7 @@ class Ui_Form(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.Buttonpush2.setText(_translate("Form", "Browse Summary File"))
-        self.Buttonpush2.clicked.connect(self.Buttonpush_handler)
+        self.Buttonpush2.clicked.connect(self.Buttonpush_handler2)
     
     def retranslateUiConnect(self, Form):
         _translate = QtCore.QCoreApplication.translate
@@ -138,9 +140,10 @@ class Ui_Form(QMainWindow):
         filepath2 = filename2[0]
 
         with open(filepath2, "r") as file:
-            Input.textOzet = file.readlines()
+            Input.textOzet = file.readlines()[0]
     
     def open_dialog_box_model(self):
+        self.doldur()
         self.getGraph()
     
     def open_dialog_box_treshold(self):
@@ -166,13 +169,8 @@ class Ui_Form(QMainWindow):
             Input.text = file.read().strip()
 
     def getGraph(self):
-        nodes = []
-        nodes.append(Node(1,"first","3.4",[1,2]))
-        nodes.append(Node(2,"second","3.5",[1,2]))
-        nodes.append(Node(3,"third","3.6",[1,2]))
-        nodes.append(Node(4,"forth","3.7",[1,2]))
         G = nx.Graph()
-        for i in nodes:
+        for i in Input.nodes:
             G.add_node(i.textNo,size = i.textPoint)
             if i.textNo != 4:
                 G.add_edge(i.textNo,i.textNo+1,color = 'r',edge_value = 0.5)
@@ -203,8 +201,25 @@ class Ui_Form(QMainWindow):
         plt.margins(0.2)
         plt.show()
         
+    def doldur(self):
+        service = sc.Service()
+        cumleler = service.Ayristir(Input.text)
+        for i in range(len(cumleler)):
+            node = Node()
+            node.textNo = i
+            node.text = cumleler[i]
+            node.nodeBenzerlikleri = []
+            Input.nodes.append(node)
 
+        for node in Input.nodes:
+            node.textPoint = service.cumleSkoruHesaplama(node, Input.text, Input.cumleBenzerlikTreshold, Input.textBaslik)
+            for i in range(len(Input.nodes)):
+                node.nodeBenzerlikleri.append(service.cumleBenzerligiHesaplama(node, Input.nodes[i]))
 
+        for node in Input.nodes:
+            print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
+            for i in range(len(node.nodeBenzerlikleri)):
+                print(f"{node.textNo} cumle - {i} cumle benzerligi =  {node.nodeBenzerlikleri[i]}")
 
 
 if __name__ == "__main__":
