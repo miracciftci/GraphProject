@@ -22,14 +22,14 @@ class ThresApp(QWidget):
         #btn.clicked.connect()
 
     def showDialog(self):
-        Int,Ifokay = QInputDialog.getDouble(None,'Sentence Similarity','Enter number:')
+        Int,Ifokay = QInputDialog.getDouble(None,'Similarity','Enter number:')
         print(Int)
         print(Ifokay)
         if Ifokay:
             self.showDialog2()
             
     def showDialog2(self):
-        Int,Ifokay = QInputDialog.getDouble(None,'Sentence Score ','Enter number:')
+        Int,Ifokay = QInputDialog.getDouble(None,'Score ','Enter number:')
         print(Int)
         print(Ifokay)
 
