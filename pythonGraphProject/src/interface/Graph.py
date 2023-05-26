@@ -1,7 +1,7 @@
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from Node import Node
+from GraphProject.pythonGraphProject.src.interface.Node import Node
 
 
 
