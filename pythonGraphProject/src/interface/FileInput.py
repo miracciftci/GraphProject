@@ -6,7 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 import Service as sc
-from src.model.Node import Node
+from Node import Node
 
 
 class Input:
@@ -149,14 +149,14 @@ class Ui_Form(QMainWindow):
     def open_dialog_box_treshold(self):
         def showDialog():
             Int,Ifokay = QInputDialog.getDouble(None,'Similarity','Enter number:')
-            print(Int)
+            Input.cumleBenzerlikTreshold = Int
             print(Ifokay)
             if Ifokay:
                 showDialog2()
             
         def showDialog2():
             Int,Ifokay = QInputDialog.getDouble(None,'Score ','Enter number:')
-            print(Int)
+            Input.cumleSkorTreshold = Int
             print(Ifokay)
         showDialog()
     
@@ -170,30 +170,40 @@ class Ui_Form(QMainWindow):
 
     def getGraph(self):
         G = nx.Graph()
+        service = sc.Service()
         for i in Input.nodes:
-            G.add_node(i.textNo,size = i.textPoint)
-            if i.textNo != 4:
-                G.add_edge(i.textNo,i.textNo+1,color = 'r',edge_value = 0.5)
-            else:
-                G.add_edge(4,1,color='r',edge_value = 0.5)
+            treshold_gecen_sayisi = service.cumleBenzerligiThresholdunuGecen(Input.cumleBenzerlikTreshold,i)
+            print(treshold_gecen_sayisi)
+            G.add_node(i.textNo,score = i.textPoint,amount = (treshold_gecen_sayisi-1)),
             
-            pos = nx.circular_layout(G)
-            colors = nx.get_edge_attributes(G,'color').values()
-            edge_values = {(f,s):d["edge_value"] for f,s,d in G.edges(data=True)}
-            # for f,s in G.nodes(data=True):
-            #    if len(s) != 0:
-            #         print(f"s printing {s['size']}")
-            node_values = {f:s for f,s in G.nodes(data=True)}
-            new_node_values={}
-            for i in node_values:
-                if len(node_values[i]) != 0:
-                    #print(f" i  ==  {node_values[i]['size']}")
-                    new_node_values[i] = node_values[i]['size']
-            print(new_node_values)         
-            #print(node_values)
+        for i in Input.nodes:    
+            for k in Input.nodes:
+                if k.textNo>i.textNo:
+                        print(Input.nodes.index(k))
+                        if Input.cumleBenzerlikTreshold > i.nodeBenzerlikleri[Input.nodes.index(k)]:
+                            G.add_edge(i.textNo,k.textNo,color = 'red',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
+                        else:
+                            G.add_edge(i.textNo,k.textNo,color = 'blue',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
 
-            #G.add_edge(6,1)
-        labels = nx.get_node_attributes(G,'size')
+                    
+            
+        pos = nx.fruchterman_reingold_layout(G)
+        colors = nx.get_edge_attributes(G,'color').values()
+        edge_values = {(f,s):d["edge_value"] for f,s,d in G.edges(data=True)}
+        # for f,s in G.nodes(data=True):
+        #    if len(s) != 0:
+        #         print(f"s printing {s['score']}")
+        node_values = {f:s for f,s in G.nodes(data=True)}
+        new_node_values={}
+        for i in node_values:
+            if len(node_values[i]) != 0:
+                #print(f" i  ==  {node_values[i]['score']}")
+                new_node_values[i] = node_values[i]['score']
+        print(new_node_values)         
+        #print(node_values)
+
+        #G.add_edge(6,1)
+        labels = nx.get_node_attributes(G,'score')
         #pos_higher = getPosHigher(pos)
         nx.draw(G,pos,edge_color = colors,node_color = 'lightgreen' ,with_labels=True)
         nx.draw_networkx_labels(G,pos=pos , labels = node_values,font_color = "blue",font_size = 12)

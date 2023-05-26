@@ -6,8 +6,8 @@ from nltk import pos_tag, word_tokenize
 from nltk.corpus import stopwords
 from rouge import Rouge
 
-from src.interface.FileInput import Input
-from src.model.Node import Node
+from FileInput import Input
+from Node import Node
 
 
 class Service:
