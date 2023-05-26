@@ -1,10 +1,8 @@
 from PyQt5 import QtWidgets , QtCore , QtGui 
 from PyQt5.QtWidgets import QInputDialog , QLineEdit , QFileDialog,QApplication , QWidget, QMainWindow
 from PyQt5.QtGui import QIcon
-
 import networkx as nx
 import matplotlib.pyplot as plt
-
 import Service as sc
 from Node import Node
 
@@ -151,14 +149,12 @@ class Ui_Form(QMainWindow):
         def showDialog():
             Int,Ifokay = QInputDialog.getDouble(None,'Similarity','Enter number:',decimals=3)
             Input.cumleBenzerlikTreshold = Int
-            print(Ifokay)
             if Ifokay:
                 showDialog2()
             
         def showDialog2():
             Int,Ifokay = QInputDialog.getDouble(None,'Score ','Enter number:',decimals=3)
             Input.cumleSkorTreshold = Int
-            print(Ifokay)
         showDialog()
     
     def open_dialog_box(self):
@@ -174,20 +170,16 @@ class Ui_Form(QMainWindow):
         service = sc.Service()
         for i in Input.nodes:
             treshold_gecen_sayisi = service.cumleBenzerligiThresholdunuGecen(Input.cumleBenzerlikTreshold,i,Input.nodes)
-            print(treshold_gecen_sayisi)
             G.add_node(i.textNo,score = i.textPoint,amount = (treshold_gecen_sayisi-1)),
-            
-        for i in Input.nodes:    
+
+        for i in Input.nodes:
             for k in Input.nodes:
                 if k.textNo>i.textNo:
-                        print(Input.nodes.index(k))
                         if Input.cumleBenzerlikTreshold >= i.nodeBenzerlikleri[Input.nodes.index(k)]:
                             G.add_edge(i.textNo,k.textNo,color = 'red',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
                         else:
                             G.add_edge(i.textNo,k.textNo,color = 'blue',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
 
-                    
-            
         pos = nx.fruchterman_reingold_layout(G)
         colors = nx.get_edge_attributes(G,'color').values()
         edge_values = {(f,s):d["edge_value"] for f,s,d in G.edges(data=True)}
@@ -198,17 +190,11 @@ class Ui_Form(QMainWindow):
         new_node_values={}
         for i in node_values:
             if len(node_values[i]) != 0:
-                #print(f" i  ==  {node_values[i]['score']}")
                 new_node_values[i] = node_values[i]['score']
-        print(new_node_values)         
-        #print(node_values)
 
-        #G.add_edge(6,1)
         labels = nx.get_node_attributes(G,'score')
         pos_higher = self.getHigherPos(pos,0.12)
-        print(pos)
-        print(pos_higher)
-        colorMap = ['blue' if node.textPoint < Input.cumleSkorTreshold else 'green' for node in Input.nodes]  
+        colorMap = ['lightgrey' if node.textPoint < Input.cumleSkorTreshold else 'lightgreen' for node in Input.nodes]
         nx.draw(G,pos,edge_color = colors,node_color = colorMap ,with_labels=True, node_size=300,edgecolors='black')
         nx.draw_networkx_labels(G,pos=pos_higher , labels = node_values,font_color = "purple",font_size = 12)
         nx.draw_networkx_edge_labels(G,pos = pos,edge_labels = edge_values, label_pos = 0.3)
@@ -232,13 +218,11 @@ class Ui_Form(QMainWindow):
                 node.nodeBenzerlikleri.append(service.cumleBenzerligiHesaplama(node, Input.nodes[i]))
 
         for node in Input.nodes:
+            print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
             node.textPoint = service.cumleSkoruHesaplama(node, Input.text, Input.cumleBenzerlikTreshold, Input.textBaslik,Input.nodes)
-            
 
         for node in Input.nodes:
             print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
-            for i in range(len(node.nodeBenzerlikleri)):
-                print(f"{node.textNo} cumle - {i} cumle benzerligi =  {node.nodeBenzerlikleri[i]}")
 
     def saveToFile(self):
         service = sc.Service()

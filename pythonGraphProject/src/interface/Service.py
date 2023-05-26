@@ -208,12 +208,17 @@ class Service:
         service = Service()
         point = 0.0
         total = len(service.Tokennize(node.text))
-
+        print(point)
         point += service.cumledeNumaricVeriSayisi(node.text) / total  #p1
+        print(point)
         point += service.cumledeOzelIsimSayisi(node.text) / total    #p3
-        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node,nodes) / (len(node.nodeBenzerlikleri) - 1)  # p3
+        print(point)
+        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node,nodes) / (len(node.nodeBenzerlikleri)*2 - 1)  # p3
+        print(point)
         point += service.basliktakiKelimelerinOrani(node,baslikText)   #p4
+        print(point)
         point += service.cumledeTemaKelimeOrani(text,node)  #p5
+        print(point)
 
         return round(point,2)
 
