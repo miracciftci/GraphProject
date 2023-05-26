@@ -204,11 +204,15 @@ class Ui_Form(QMainWindow):
 
         #G.add_edge(6,1)
         labels = nx.get_node_attributes(G,'score')
-        #pos_higher = getPosHigher(pos)
-        nx.draw(G,pos,edge_color = colors,node_color = 'lightgreen' ,with_labels=True)
-        nx.draw_networkx_labels(G,pos=pos , labels = node_values,font_color = "blue",font_size = 12)
-        nx.draw_networkx_edge_labels(G,pos = pos,edge_labels = edge_values, label_pos = 0.5)
+        pos_higher = self.getHigherPos(pos,0.12)
+        print(pos)
+        print(pos_higher)
+        nx.draw(G,pos,edge_color = colors,node_color = 'lightgreen' ,with_labels=True, node_size=300,edgecolors='black')
+        nx.draw_networkx_labels(G,pos=pos_higher , labels = node_values,font_color = "purple",font_size = 12)
+        nx.draw_networkx_edge_labels(G,pos = pos,edge_labels = edge_values, label_pos = 0.3)
         plt.margins(0.2)
+        figureManager = plt.get_current_fig_manager()
+        figureManager.window.showMaximized()
         plt.show()
         
     def doldur(self):
@@ -230,6 +234,16 @@ class Ui_Form(QMainWindow):
             print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
             for i in range(len(node.nodeBenzerlikleri)):
                 print(f"{node.textNo} cumle - {i} cumle benzerligi =  {node.nodeBenzerlikleri[i]}")
+    
+    def getHigherPos(self,pos,shiftY):
+        pos_higher = {}
+        for k, v in pos.items():
+            if v[1]<0:
+                pos_higher[k] = (v[0], v[1]-shiftY)
+            else:
+                pos_higher[k] = (v[0], v[1]+shiftY)
+            
+        return pos_higher
 
 
 if __name__ == "__main__":
