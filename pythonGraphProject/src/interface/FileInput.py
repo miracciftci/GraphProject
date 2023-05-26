@@ -144,6 +144,7 @@ class Ui_Form(QMainWindow):
     
     def open_dialog_box_model(self):
         self.doldur()
+        self.saveToFile()
         self.getGraph()
     
     def open_dialog_box_treshold(self):
@@ -234,7 +235,22 @@ class Ui_Form(QMainWindow):
             print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
             for i in range(len(node.nodeBenzerlikleri)):
                 print(f"{node.textNo} cumle - {i} cumle benzerligi =  {node.nodeBenzerlikleri[i]}")
-    
+
+    def saveToFile(self):
+        service = sc.Service()
+        ozet = service.textOzetleme(Input.nodes)
+        rougeSkoru = service.textOzetlemeROUGEskoru(ozet, Input.textOzet)
+        f = open("metinOzeti.txt", "w")
+        f.write("Metin Ozeti ;\n")
+        f.write(ozet)
+        f.write(f"\n\nROUGE benzerlik skoru: {rougeSkoru}")
+        f.close()
+
+        file = open("cumleler.txt", "w")
+        for node in Input.nodes:
+            file.write(f"{node.textNo} - {node.text}\n")
+        file.close()
+
     def getHigherPos(self,pos,shiftY):
         pos_higher = {}
         for k, v in pos.items():
