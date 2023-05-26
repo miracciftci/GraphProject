@@ -6,7 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 import Service as sc
-from src.model.Node import Node
+from Node import Node
 
 
 class Input:
