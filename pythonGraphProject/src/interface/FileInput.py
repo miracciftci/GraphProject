@@ -180,7 +180,7 @@ class Ui_Form(QMainWindow):
             for k in Input.nodes:
                 if k.textNo>i.textNo:
                         print(Input.nodes.index(k))
-                        if Input.cumleBenzerlikTreshold > i.nodeBenzerlikleri[Input.nodes.index(k)]:
+                        if Input.cumleBenzerlikTreshold >= i.nodeBenzerlikleri[Input.nodes.index(k)]:
                             G.add_edge(i.textNo,k.textNo,color = 'red',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
                         else:
                             G.add_edge(i.textNo,k.textNo,color = 'blue',edge_value = i.nodeBenzerlikleri[Input.nodes.index(k)])
