@@ -149,14 +149,14 @@ class Ui_Form(QMainWindow):
     
     def open_dialog_box_treshold(self):
         def showDialog():
-            Int,Ifokay = QInputDialog.getDouble(None,'Similarity','Enter number:')
+            Int,Ifokay = QInputDialog.getDouble(None,'Similarity','Enter number:',decimals=3)
             Input.cumleBenzerlikTreshold = Int
             print(Ifokay)
             if Ifokay:
                 showDialog2()
             
         def showDialog2():
-            Int,Ifokay = QInputDialog.getDouble(None,'Score ','Enter number:')
+            Int,Ifokay = QInputDialog.getDouble(None,'Score ','Enter number:',decimals=3)
             Input.cumleSkorTreshold = Int
             print(Ifokay)
         showDialog()
@@ -173,7 +173,7 @@ class Ui_Form(QMainWindow):
         G = nx.Graph()
         service = sc.Service()
         for i in Input.nodes:
-            treshold_gecen_sayisi = service.cumleBenzerligiThresholdunuGecen(Input.cumleBenzerlikTreshold,i)
+            treshold_gecen_sayisi = service.cumleBenzerligiThresholdunuGecen(Input.cumleBenzerlikTreshold,i,Input.nodes)
             print(treshold_gecen_sayisi)
             G.add_node(i.textNo,score = i.textPoint,amount = (treshold_gecen_sayisi-1)),
             
@@ -208,7 +208,8 @@ class Ui_Form(QMainWindow):
         pos_higher = self.getHigherPos(pos,0.12)
         print(pos)
         print(pos_higher)
-        nx.draw(G,pos,edge_color = colors,node_color = 'lightgreen' ,with_labels=True, node_size=300,edgecolors='black')
+        colorMap = ['blue' if node.textPoint < Input.cumleSkorTreshold else 'green' for node in Input.nodes]  
+        nx.draw(G,pos,edge_color = colors,node_color = colorMap ,with_labels=True, node_size=300,edgecolors='black')
         nx.draw_networkx_labels(G,pos=pos_higher , labels = node_values,font_color = "purple",font_size = 12)
         nx.draw_networkx_edge_labels(G,pos = pos,edge_labels = edge_values, label_pos = 0.3)
         plt.margins(0.2)
@@ -227,9 +228,12 @@ class Ui_Form(QMainWindow):
             Input.nodes.append(node)
 
         for node in Input.nodes:
-            node.textPoint = service.cumleSkoruHesaplama(node, Input.text, Input.cumleBenzerlikTreshold, Input.textBaslik)
             for i in range(len(Input.nodes)):
                 node.nodeBenzerlikleri.append(service.cumleBenzerligiHesaplama(node, Input.nodes[i]))
+
+        for node in Input.nodes:
+            node.textPoint = service.cumleSkoruHesaplama(node, Input.text, Input.cumleBenzerlikTreshold, Input.textBaslik,Input.nodes)
+            
 
         for node in Input.nodes:
             print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")

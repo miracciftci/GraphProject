@@ -153,11 +153,12 @@ class Service:
 
         return round(point,3)
 
-    def cumleBenzerligiThresholdunuGecen(self, threshold,node):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
+    def cumleBenzerligiThresholdunuGecen(self, threshold,node,nodes):   #Cümle benzerliği threshold’unu geçen node’ların bulunması (P3)
         total = 0
         for i in range(len(node.nodeBenzerlikleri)):
             if threshold < node.nodeBenzerlikleri[i]:
-                total += 1
+                if(nodes[i].nodeBenzerlikleri[node.textNo]>threshold):
+                    total += 1
         return total
 
     def basliktakiKelimelerinOrani(self, node, BaslikCumlesi):    # p4
@@ -203,14 +204,14 @@ class Service:
 
         return round(score,7)
 
-    def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi,baslikText):
+    def cumleSkoruHesaplama(self,node,text,thresholdCumleBenzerligi,baslikText,nodes):
         service = Service()
         point = 0.0
         total = len(service.Tokennize(node.text))
 
         point += service.cumledeNumaricVeriSayisi(node.text) / total  #p1
         point += service.cumledeOzelIsimSayisi(node.text) / total    #p3
-        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node) / (len(node.nodeBenzerlikleri) - 1)  # p3
+        point += service.cumleBenzerligiThresholdunuGecen(thresholdCumleBenzerligi,node,nodes) / (len(node.nodeBenzerlikleri) - 1)  # p3
         point += service.basliktakiKelimelerinOrani(node,baslikText)   #p4
         point += service.cumledeTemaKelimeOrani(text,node)  #p5
 
