@@ -183,9 +183,7 @@ class Ui_Form(QMainWindow):
         pos = nx.fruchterman_reingold_layout(G)
         colors = nx.get_edge_attributes(G,'color').values()
         edge_values = {(f,s):d["edge_value"] for f,s,d in G.edges(data=True)}
-        # for f,s in G.nodes(data=True):
-        #    if len(s) != 0:
-        #         print(f"s printing {s['score']}")
+
         node_values = {f:s for f,s in G.nodes(data=True)}
         new_node_values={}
         for i in node_values:
@@ -218,7 +216,6 @@ class Ui_Form(QMainWindow):
                 node.nodeBenzerlikleri.append(service.cumleBenzerligiHesaplama(node, Input.nodes[i]))
 
         for node in Input.nodes:
-            print(f"{node.textNo}) puan = {node.textPoint} - {node.text}")
             node.textPoint = service.cumleSkoruHesaplama(node, Input.text, Input.cumleBenzerlikTreshold, Input.textBaslik,Input.nodes)
 
         for node in Input.nodes:
