@@ -12,4 +12,4 @@ Purpose: reinforcing knowledge of data structures and problems. It aims to devel
 
   <img src="pythonGraphProject/src/interface/images/graphPic.png" width="900" height="600">
 
-  - The technologies we have used are PyQT5, networkX, matplotlib, NLTK. 
+ - The technologies being used are PyQT5, networkX, matplotlib, NLTK. 
