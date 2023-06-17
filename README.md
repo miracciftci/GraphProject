@@ -9,4 +9,4 @@ Purpose: reinforcing knowledge of data structures and problem.It aims to develop
   algorithms are available, then these scores and similarity.
   After calculating the ratios, the work is converted into a visual graph structure.
 
-  <img src="pythonGraphProject/src/interface/images/graphPic.png" width="450">
+  <img src="pythonGraphProject/src/interface/images/graphPic.png" width="600" height="800">
